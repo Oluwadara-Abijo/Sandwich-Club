@@ -24,6 +24,8 @@ public class DetailActivity extends AppCompatActivity {
     private TextView mPlaceOfOrigin;
     private TextView mIngredients;
     private TextView mDescription;
+    private View mAlsoKnownAsView;
+    private View mOriginView;
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
@@ -42,6 +44,8 @@ public class DetailActivity extends AppCompatActivity {
         mPlaceOfOrigin = findViewById(R.id.origin_tv);
         mIngredients = findViewById(R.id.ingredients_tv);
         mDescription = findViewById(R.id.description_tv);
+        mAlsoKnownAsView = findViewById(R.id.also_known_as_view);
+        mOriginView = findViewById(R.id.origin_view);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -90,12 +94,12 @@ public class DetailActivity extends AppCompatActivity {
     @SuppressLint("StringFormatInvalid")
     private void populateUI() {
 
-        if (mSandwich.getAlsoKnownAs().isEmpty()) {
-            mAlsoKnownAs.setVisibility(View.GONE);
-        }
+        mDescription.setText(mSandwich.getDescription());
 
         if (mSandwich.getPlaceOfOrigin().isEmpty()) {
-            mPlaceOfOrigin.setVisibility(View.GONE);
+            mOriginView.setVisibility(View.GONE);
+        } else {
+            mPlaceOfOrigin.setText(mSandwich.getPlaceOfOrigin());
         }
 
         //Convert alsoKnownAs array to string
@@ -104,11 +108,16 @@ public class DetailActivity extends AppCompatActivity {
         for (String word : alsoKnownAs) {
             if (alsoKnownAs.indexOf(word) == alsoKnownAs.size() - 1) {
                 akaBuilder.append(word);
-                akaBuilder.append(".");
             } else {
                 akaBuilder.append(word);
                 akaBuilder.append(", ");
             }
+        }
+
+        if (mSandwich.getAlsoKnownAs().isEmpty()) {
+            mAlsoKnownAsView.setVisibility(View.GONE);
+        } else {
+            mAlsoKnownAs.setText(akaBuilder);
         }
 
         //Convert ingredients array to string
@@ -124,9 +133,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
-        mAlsoKnownAs.setText(getString(R.string.detail_also_known_as_label, akaBuilder));
-        mPlaceOfOrigin.setText(getString(R.string.detail_place_of_origin_label, mSandwich.getPlaceOfOrigin()));
-        mDescription.setText(getString(R.string.detail_description_label, mSandwich.getDescription()));
-        mIngredients.setText(getString(R.string.detail_ingredients_label, ingredientsBuilder));
+        mIngredients.setText(ingredientsBuilder);
+
     }
 }
